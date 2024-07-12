@@ -72,8 +72,12 @@ function App() {
     );
   };
 
-  const handleDragStart = (e: React.DragEvent, id: string) => {
-    e.dataTransfer.setData("text", id);
+  const handleDragStart = (e: React.DragEvent | React.TouchEvent, id: string) => {
+    if ('dataTransfer' in e) {
+      e.dataTransfer?.setData("text", id);
+    } else {
+      e.preventDefault();
+    }
   };
 
   const handleExport = () => {
@@ -103,8 +107,8 @@ function App() {
   };
 
   return (
-    <div className="h-screen w-full flex">
-      <div className="md:w-3/4 w-full h-full bg-slate-200">
+    <div className="h-screen w-full flex md:flex-row flex-col">
+      <div className="w-3/4 md:h-full bg-slate-200 ">
         <Board
           elements={boardElements}
           onEditMove={handleEditMove}
@@ -113,8 +117,8 @@ function App() {
           onDelete={handleDelete}
         />
       </div>
-      <div className="md:w-1/4 md:h-full absolute md:relative bottom-0 w-full bg-[#2D2D2D]">
-        <Sidebar onDragStart={handleDragStart} />
+      <div className="w-1/4 h-full  bg-[#2D2D2D]">
+        <Sidebar onDragStart={(e, elementType) => handleDragStart(e, elementType)} />
         <div className="md:absolute  bottom-20 md:bg-transparent bg-[#2D2D2D] right-5 gap-4 flex justify-center  flex-col">
           <div className="flex md:flex-wrap gap-4 justify-center items-center w-full">
             <input

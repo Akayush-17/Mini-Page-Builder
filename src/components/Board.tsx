@@ -65,13 +65,13 @@ const Board: React.FC<BoardProps> = ({
     null
   );
 
-  const handleDrop = (e: React.DragEvent) => {
+  const handleDrop = (e: React.DragEvent | React.TouchEvent) => {
     e.preventDefault();
     const { top, left } = e.currentTarget.getBoundingClientRect();
-    const elementType = e.dataTransfer.getData("text");
-    const id = e.dataTransfer.getData("id");
-    const x = e.clientY - top;
-    const y = e.clientX - left;
+    const elementType = e instanceof DragEvent ? e.dataTransfer!.getData("text") : "label";
+    const id = e instanceof DragEvent ? e.dataTransfer!.getData("id") : null;
+    const x = 'clientY' in e ? e.clientY - top : e.touches[0].clientY - top;
+    const y = 'clientX' in e ? e.clientX - left : e.touches[0].clientX - left;
 
     if (id) {
       onMove(id, x, y);
@@ -93,19 +93,25 @@ const Board: React.FC<BoardProps> = ({
     setDraggedElement(null);
   };
 
-  const handleDragStart = (e: React.DragEvent, id: string) => {
+  const handleDragStart = (e: React.DragEvent | React.TouchEvent, id: string) => {
     setDraggedElement(id);
-    e.dataTransfer.setData("text", "existingElement");
-    e.dataTransfer.setData("id", id);
-  };
-
-  const handleMouseMove = (e: React.MouseEvent) => {
-    if (draggedElement) {
-      const { top, left } = e.currentTarget.getBoundingClientRect();
-      onMove(draggedElement, e.clientY - top, e.clientX - left);
+    if (e instanceof DragEvent) {
+      const dataTransfer = e.dataTransfer;
+      if (dataTransfer) {
+        dataTransfer.setData("text", "existingElement");
+        dataTransfer.setData("id", id);
+      }
     }
   };
 
+  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+    if (draggedElement) {
+      const { top, left } = (e.currentTarget as HTMLElement).getBoundingClientRect();
+      const x = 'clientY' in e ? e.clientY - top : e.touches[0].clientY - top;
+      const y = 'clientX' in e ? e.clientX - left : e.touches[0].clientX - left;
+      onMove(draggedElement, x, y);
+    }
+  };
   const handleSave = () => {
     if (editingElementId) {
       // Update existing element
@@ -235,6 +241,9 @@ const Board: React.FC<BoardProps> = ({
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onMouseMove={handleMouseMove}
+        onTouchMove={handleMouseMove}
+        onMouseUp={() => setDraggedElement(null)}
+        onTouchEnd={() => setDraggedElement(null)}
       >
         {elements.map((element) => (
           <div
@@ -245,6 +254,8 @@ const Board: React.FC<BoardProps> = ({
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}
+            onTouchStart={(e) => handleDragStart(e, element.id)}
+            onClick={() => setSelectedElementId(element.id)}
           >
             {renderElement(element)}
           </div>
