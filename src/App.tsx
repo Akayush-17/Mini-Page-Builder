@@ -15,7 +15,7 @@ function App() {
   }[] = storedElements ? JSON.parse(storedElements) : [];
 
   const [boardElements, setBoardElements] = useState(initialBoardElements);
-  
+  const [jsonInput, setJsonInput] = useState("");
 
   useEffect(() => {
     localStorage.setItem("boardElements", JSON.stringify(boardElements));
@@ -89,20 +89,56 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
+  const handleJsonInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setJsonInput(e.target.value);
+  };
+
+  const handleImport = () => {
+    try {
+      const parsedElements = JSON.parse(jsonInput);
+      setBoardElements(parsedElements);
+    } catch (error) {
+      console.error("Invalid JSON input");
+    }
+  };
+
   return (
     <div className="h-screen w-full flex">
-      <div className="w-3/4 h-full bg-slate-200">
+      <div className="md:w-3/4 w-full h-full bg-slate-200">
         <Board
           elements={boardElements}
           onEditMove={handleEditMove}
           onDrop={handleDrop}
           onMove={handleMove}
-          onDelete={handleDelete} 
+          onDelete={handleDelete}
         />
       </div>
-      <div className="w-1/4 h-full">
+      <div className="md:w-1/4 md:h-full absolute md:relative bottom-0 w-full bg-[#2D2D2D]">
         <Sidebar onDragStart={handleDragStart} />
-        <button className="absolute bottom-5 right-10 bg-gray-400 rounded-md px-2 py-3" onClick={handleExport}>Export to JSON</button>
+        <div className="md:absolute  bottom-20 md:bg-transparent bg-[#2D2D2D] right-5 gap-4 flex justify-center  flex-col">
+          <div className="flex md:flex-wrap gap-4 justify-center items-center w-full">
+            <input
+              className="h-12 p-2 border border-gray-400 rounded-md"
+              placeholder="Paste JSON to import"
+              value={jsonInput}
+              onChange={handleJsonInput}
+            />
+            <button
+              className="bg-gray-400 rounded-md px-2 py-3"
+              onClick={handleImport}
+            >
+              Import JSON
+            </button>
+          </div>
+          <div className="flex w-full md:justify-end justify-center">
+            <button
+              className=" bg-gray-400 rounded-md px-2 py-3"
+              onClick={handleExport}
+            >
+              Export JSON
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );
