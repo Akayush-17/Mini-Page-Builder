@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import Board from "./components/Board";
 import Sidebar from "./components/Sidebar";
+
 function App() {
   const storedElements = localStorage.getItem("boardElements");
   const initialBoardElements: {
@@ -14,6 +15,7 @@ function App() {
   }[] = storedElements ? JSON.parse(storedElements) : [];
 
   const [boardElements, setBoardElements] = useState(initialBoardElements);
+  
 
   useEffect(() => {
     localStorage.setItem("boardElements", JSON.stringify(boardElements));
@@ -63,6 +65,7 @@ function App() {
       )
     );
   };
+
   const handleDelete = (id: string) => {
     setBoardElements((prevElements) =>
       prevElements.filter((element) => element.id !== id)
@@ -73,6 +76,19 @@ function App() {
     e.dataTransfer.setData("text", id);
   };
 
+  const handleExport = () => {
+    const jsonContent = JSON.stringify(boardElements, null, 2);
+    const blob = new Blob([jsonContent], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "board-elements.json";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <div className="h-screen w-full flex">
       <div className="w-3/4 h-full bg-slate-200">
@@ -81,11 +97,12 @@ function App() {
           onEditMove={handleEditMove}
           onDrop={handleDrop}
           onMove={handleMove}
-          onDelete={handleDelete}
+          onDelete={handleDelete} 
         />
       </div>
       <div className="w-1/4 h-full">
         <Sidebar onDragStart={handleDragStart} />
+        <button className="absolute bottom-5 right-10 bg-gray-400 rounded-md px-2 py-3" onClick={handleExport}>Export to JSON</button>
       </div>
     </div>
   );

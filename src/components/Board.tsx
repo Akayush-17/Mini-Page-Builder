@@ -7,7 +7,6 @@ import {
   TextField,
   IconButton,
 } from "@mui/material";
-
 import * as React from "react";
 import { useState } from "react";
 
@@ -20,7 +19,6 @@ interface BoardProps {
     text: string;
     fontSize: number;
     fontWeight: string;
-    
   }[];
   onDrop: (
     elementType: string,
@@ -39,17 +37,16 @@ interface BoardProps {
     fontSize: number,
     fontWeight: string
   ) => void;
-  onDelete: (id: string) => void; 
+  onDelete: (id: string) => void;
 }
 
 const Board: React.FC<BoardProps> = ({
-  elements: initialElements,
+  elements,
   onDrop,
   onMove,
   onEditMove,
   onDelete,
 }) => {
-  const [elements, setElements] = useState(initialElements);
   const [draggedElement, setDraggedElement] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentElement, setCurrentElement] = useState<{
@@ -142,7 +139,7 @@ const Board: React.FC<BoardProps> = ({
       fontWeight: "normal",
     });
   };
-  
+
   const renderElement = (element: {
     id: string;
     type: string;
@@ -191,7 +188,12 @@ const Board: React.FC<BoardProps> = ({
         );
       case "label":
         return (
-          <div tabIndex={0} onKeyDown={handleKeyDown} onClick={handleClick} style={style}>
+          <div
+            tabIndex={0}
+            onKeyDown={handleKeyDown}
+            onClick={handleClick}
+            style={style}
+          >
             {element.text}
           </div>
         );
@@ -205,11 +207,9 @@ const Board: React.FC<BoardProps> = ({
         return null;
     }
   };
+
   const handleDelete = () => {
     if (selectedElementId) {
-      setElements((prevElements) =>
-        prevElements.filter((element) => element.id !== selectedElementId)
-      );
       onDelete(selectedElementId);
       setSelectedElementId(null);
     }
@@ -228,7 +228,6 @@ const Board: React.FC<BoardProps> = ({
     };
   }, [selectedElementId]);
 
-
   return (
     <>
       <div
@@ -240,7 +239,9 @@ const Board: React.FC<BoardProps> = ({
         {elements.map((element) => (
           <div
             key={element.id}
-            className={`absolute z-50 ${element.type === "button" ? 'bg-blue-500 rounded-md' : 'bg-white'}  `}
+            className={`absolute z-50 ${
+              element.type === "button" ? "bg-blue-500 rounded-md" : "bg-white"
+            }`}
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}
@@ -259,14 +260,22 @@ const Board: React.FC<BoardProps> = ({
             open={modalOpen}
             fullWidth
           >
-            <DialogTitle sx={{ m: 0, p: 2,display: "flex", justifyContent: "space-between", alignItems: "center" }} id="customized-dialog-title">
+            <DialogTitle
+              sx={{
+                m: 0,
+                p: 2,
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+              id="customized-dialog-title"
+            >
               Edit {currentElement?.type}
-              <IconButton 
+              <IconButton
                 aria-label="close"
                 onClick={() => setModalOpen(false)}
                 sx={{
                   color: (theme) => theme.palette.grey[500],
-                 
                 }}
               >
                 <svg
@@ -275,7 +284,6 @@ const Board: React.FC<BoardProps> = ({
                   viewBox="0 0 24 24"
                   fill="none"
                   xmlns="http://www.w3.org/2000/svg"
-
                 >
                   <g id="Menu / Close_MD">
                     <path
@@ -336,9 +344,10 @@ const Board: React.FC<BoardProps> = ({
                 }
               />
               <TextField
-                label="Font size"
+                label="Font Size"
                 fullWidth
                 type="number"
+                placeholder="Enter font size"
                 value={elementData.fontSize}
                 onChange={(e) =>
                   setElementData({
@@ -347,14 +356,16 @@ const Board: React.FC<BoardProps> = ({
                   })
                 }
               />
-
               <TextField
-                label="Font weight"
+                label="Font Weight"
                 fullWidth
-                type="text"
+                placeholder="Enter font weight"
                 value={elementData.fontWeight}
                 onChange={(e) =>
-                  setElementData({ ...elementData, fontWeight: e.target.value })
+                  setElementData({
+                    ...elementData,
+                    fontWeight: e.target.value,
+                  })
                 }
               />
             </DialogContent>
@@ -367,7 +378,7 @@ const Board: React.FC<BoardProps> = ({
                 Cancel
               </Button> */}
               <Button variant="contained" autoFocus onClick={handleSave}>
-                Save
+                Save Changes
               </Button>
             </DialogActions>
           </Dialog>
