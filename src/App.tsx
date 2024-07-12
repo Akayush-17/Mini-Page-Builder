@@ -63,6 +63,11 @@ function App() {
       )
     );
   };
+  const handleDelete = (id: string) => {
+    setBoardElements((prevElements) =>
+      prevElements.filter((element) => element.id !== id)
+    );
+  };
 
   const handleDragStart = (e: React.DragEvent, id: string) => {
     e.dataTransfer.setData("text", id);
@@ -76,6 +81,7 @@ function App() {
           onEditMove={handleEditMove}
           onDrop={handleDrop}
           onMove={handleMove}
+          onDelete={handleDelete}
         />
       </div>
       <div className="w-1/4 h-full">

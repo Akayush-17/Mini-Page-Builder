@@ -5,7 +5,9 @@ import {
   DialogContent,
   DialogTitle,
   TextField,
+  IconButton,
 } from "@mui/material";
+
 import * as React from "react";
 import { useState } from "react";
 
@@ -18,6 +20,7 @@ interface BoardProps {
     text: string;
     fontSize: number;
     fontWeight: string;
+    
   }[];
   onDrop: (
     elementType: string,
@@ -36,14 +39,17 @@ interface BoardProps {
     fontSize: number,
     fontWeight: string
   ) => void;
+  onDelete: (id: string) => void; 
 }
 
 const Board: React.FC<BoardProps> = ({
-  elements,
+  elements: initialElements,
   onDrop,
   onMove,
   onEditMove,
+  onDelete,
 }) => {
+  const [elements, setElements] = useState(initialElements);
   const [draggedElement, setDraggedElement] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentElement, setCurrentElement] = useState<{
@@ -58,7 +64,9 @@ const Board: React.FC<BoardProps> = ({
     fontWeight: string;
   }>({ text: "", x: 0, y: 0, fontSize: 16, fontWeight: "normal" });
   const [editingElementId, setEditingElementId] = useState<string | null>(null);
-  const [selectedElementId, setSelectedElementId] = useState<string | null>(null);
+  const [selectedElementId, setSelectedElementId] = useState<string | null>(
+    null
+  );
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -67,7 +75,6 @@ const Board: React.FC<BoardProps> = ({
     const id = e.dataTransfer.getData("id");
     const x = e.clientY - top;
     const y = e.clientX - left;
-  
 
     if (id) {
       onMove(id, x, y);
@@ -93,10 +100,7 @@ const Board: React.FC<BoardProps> = ({
     setDraggedElement(id);
     e.dataTransfer.setData("text", "existingElement");
     e.dataTransfer.setData("id", id);
-   
   };
-  
-
 
   const handleMouseMove = (e: React.MouseEvent) => {
     if (draggedElement) {
@@ -138,7 +142,7 @@ const Board: React.FC<BoardProps> = ({
       fontWeight: "normal",
     });
   };
-
+  
   const renderElement = (element: {
     id: string;
     type: string;
@@ -169,13 +173,17 @@ const Board: React.FC<BoardProps> = ({
         });
       }
     };
+    const handleClick = () => {
+      setSelectedElementId(element.id);
+    };
 
     switch (element.type) {
       case "input":
         return (
-          <input 
+          <input
             onKeyDown={handleKeyDown}
             placeholder="Enter Value"
+            onClick={handleClick}
             value={element.text}
             type="text"
             style={style}
@@ -183,13 +191,13 @@ const Board: React.FC<BoardProps> = ({
         );
       case "label":
         return (
-          <div tabIndex={0} onKeyDown={handleKeyDown} style={style}>
-          {element.text}
-        </div>
+          <div tabIndex={0} onKeyDown={handleKeyDown} onClick={handleClick} style={style}>
+            {element.text}
+          </div>
         );
       case "button":
         return (
-          <button onKeyDown={handleKeyDown} style={style}>
+          <button onKeyDown={handleKeyDown} onClick={handleClick} style={style}>
             {element.text}
           </button>
         );
@@ -197,6 +205,29 @@ const Board: React.FC<BoardProps> = ({
         return null;
     }
   };
+  const handleDelete = () => {
+    if (selectedElementId) {
+      setElements((prevElements) =>
+        prevElements.filter((element) => element.id !== selectedElementId)
+      );
+      onDelete(selectedElementId);
+      setSelectedElementId(null);
+    }
+  };
+
+  React.useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Delete") {
+        handleDelete();
+      }
+    };
+
+    document.addEventListener("keydown", handleKeyDown);
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [selectedElementId]);
+
 
   return (
     <>
@@ -209,11 +240,10 @@ const Board: React.FC<BoardProps> = ({
         {elements.map((element) => (
           <div
             key={element.id}
-            className="absolute z-50 bg-white "
+            className={`absolute z-50 ${element.type === "button" ? 'bg-blue-500 rounded-md' : 'bg-white'}  `}
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}
-          
           >
             {renderElement(element)}
           </div>
@@ -229,9 +259,38 @@ const Board: React.FC<BoardProps> = ({
             open={modalOpen}
             fullWidth
           >
-            <DialogTitle sx={{ m: 0, p: 2 }} id="customized-dialog-title">
+            <DialogTitle sx={{ m: 0, p: 2,display: "flex", justifyContent: "space-between", alignItems: "center" }} id="customized-dialog-title">
               Edit {currentElement?.type}
+              <IconButton 
+                aria-label="close"
+                onClick={() => setModalOpen(false)}
+                sx={{
+                  color: (theme) => theme.palette.grey[500],
+                 
+                }}
+              >
+                <svg
+                  width="23px"
+                  height="23px"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+
+                >
+                  <g id="Menu / Close_MD">
+                    <path
+                      id="Vector"
+                      d="M18 18L12 12M12 12L6 6M12 12L18 6M12 12L6 18"
+                      stroke="#000000"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </g>
+                </svg>
+              </IconButton>
             </DialogTitle>
+
             <DialogContent
               sx={{
                 display: "flex",
@@ -299,14 +358,14 @@ const Board: React.FC<BoardProps> = ({
                 }
               />
             </DialogContent>
-            <DialogActions>
-              <Button
+            <DialogActions sx={{  display:"flex", justifyContent:"flex-start", p:2}}>
+              {/* <Button
                 variant="contained"
                 color="error"
                 onClick={() => setModalOpen(false)}
               >
                 Cancel
-              </Button>
+              </Button> */}
               <Button variant="contained" autoFocus onClick={handleSave}>
                 Save
               </Button>
