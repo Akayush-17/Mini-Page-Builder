@@ -126,8 +126,8 @@ function App() {
   };
 
   return (
-    <div className="h-screen w-full flex md:flex-row flex-col">
-      <div className="w-3/4 md:h-full bg-slate-200 ">
+    <div className="h-screen w-screen overflow-hidden flex md:flex-row flex-col bg-slate-200">
+      <div className="md:w-3/4 w-full md:h-full  bg-slate-200 ">
         <Board
           elements={boardElements}
           onEditMove={handleEditMove}
@@ -138,7 +138,7 @@ function App() {
           setTouchData={setTouchData}
         />
       </div>
-      <div className="w-1/4 h-full bg-[#2D2D2D]">
+      <div className="md:w-1/4 w-full md:h-full absolute md:relative bottom-0 bg-[#2D2D2D]">
         <Sidebar onDragStart={handleDragStart} onElementCreate={handleElementCreate} />
         <div className="md:absolute  bottom-20 md:bg-transparent bg-[#2D2D2D] right-5 gap-4 flex justify-center  flex-col">
           <div className="flex md:flex-wrap gap-4 justify-center items-center w-full">
