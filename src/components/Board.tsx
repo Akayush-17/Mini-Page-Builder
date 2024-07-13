@@ -8,8 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import * as React from "react";
-import { useState, useRef,  Dispatch, SetStateAction } from "react";
-
+import { useState, useRef, useEffect, Dispatch, SetStateAction } from "react";
 
 interface ElementData {
   id: string;
@@ -43,7 +42,6 @@ interface BoardProps {
     fontWeight: string
   ) => void;
   onDelete: (id: string) => void;
-  
 }
 
 const Board: React.FC<BoardProps> = ({
@@ -71,6 +69,18 @@ const Board: React.FC<BoardProps> = ({
   const [selectedElementId, setSelectedElementId] = useState<string | null>(
     null
   );
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setWindowWidth(window.innerWidth);
+    };
+
+    window.addEventListener("resize", handleResize);
+    return () => {
+      window.removeEventListener("resize", handleResize);
+    };
+  }, []);
 
   const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
@@ -124,7 +134,6 @@ const Board: React.FC<BoardProps> = ({
     const left = touch.clientX - boardRect.left;
     onMove(draggedElement, top, left);
   };
-
 
   const handleTouchEnd = () => {
     setDraggedElement(null);
@@ -181,21 +190,26 @@ const Board: React.FC<BoardProps> = ({
     };
     const handleKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === "Enter" && !e.ctrlKey) {
-        // Open the modal for the selected element
-        setSelectedElementId(element.id);
-        setEditingElementId(element.id);
-        setModalOpen(true);
-        setElementData({
-          text: element.text,
-          x: element.top,
-          y: element.left,
-          fontSize: element.fontSize,
-          fontWeight: element.fontWeight,
-        });
+        openModal();
       }
+    };
+    const handleElementClick = () => {
+      openModal();
     };
     const handleClick = () => {
       setSelectedElementId(element.id);
+    };
+    const openModal = () => {
+      setSelectedElementId(element.id);
+      setEditingElementId(element.id);
+      setModalOpen(true);
+      setElementData({
+        text: element.text,
+        x: element.top,
+        y: element.left,
+        fontSize: element.fontSize,
+        fontWeight: element.fontWeight,
+      });
     };
 
     switch (element.type) {
@@ -204,7 +218,12 @@ const Board: React.FC<BoardProps> = ({
           <input
             onKeyDown={handleKeyDown}
             placeholder="Enter Value"
-            onClick={handleClick}
+            onClick={() => {
+              handleClick();
+              if (windowWidth < 768) {
+                handleElementClick();
+              }
+            }}
             value={element.text}
             type="text"
             style={style}
@@ -215,7 +234,12 @@ const Board: React.FC<BoardProps> = ({
           <div
             tabIndex={0}
             onKeyDown={handleKeyDown}
-            onClick={handleClick}
+            onClick={() => {
+              handleClick();
+              if (windowWidth < 768) {
+                handleElementClick();
+              }
+            }}
             style={style}
           >
             {element.text}
@@ -223,7 +247,16 @@ const Board: React.FC<BoardProps> = ({
         );
       case "button":
         return (
-          <button onKeyDown={handleKeyDown} onClick={handleClick} style={style}>
+          <button
+            onKeyDown={handleKeyDown}
+            onClick={() => {
+              handleClick();
+              if (windowWidth < 768) {
+                handleElementClick();
+              }
+            }}
+            style={style}
+          >
             {element.text}
           </button>
         );
@@ -236,6 +269,7 @@ const Board: React.FC<BoardProps> = ({
     if (selectedElementId) {
       onDelete(selectedElementId);
       setSelectedElementId(null);
+      setModalOpen(false)
     }
   };
 
@@ -272,7 +306,7 @@ const Board: React.FC<BoardProps> = ({
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}
-            onTouchStart={() => handleTouchStart( element.id)}
+            onTouchStart={() => handleTouchStart(element.id)}
           >
             {renderElement(element)}
           </div>
@@ -397,17 +431,23 @@ const Board: React.FC<BoardProps> = ({
                 }
               />
             </DialogContent>
-              <DialogActions sx={{  display:"flex", justifyContent:"flex-start", p:2}}>
-              {/* <Button
-                variant="contained"
-                color="error"
-                onClick={() => setModalOpen(false)}
-              >
-                Cancel
-              </Button> */}
+            <DialogActions
+              sx={{ display: "flex", justifyContent: "flex-start", p: 2 }}
+            >
               <Button variant="contained" autoFocus onClick={handleSave}>
                 Save Changes
               </Button>
+              <div className="md:hidden block">
+
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleDelete}
+                
+                >
+                Delete
+              </Button>
+                </div>
             </DialogActions>
           </Dialog>
         )}

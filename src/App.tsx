@@ -138,7 +138,7 @@ function App() {
           setTouchData={setTouchData}
         />
       </div>
-      <div className="md:w-1/4 w-full md:h-full absolute md:relative bottom-0 bg-[#2D2D2D]">
+      <div className="md:w-1/4 w-full md:h-full absolute md:relative bottom-0 bg-[#2D2D2D] pb-2">
         <Sidebar onDragStart={handleDragStart} onElementCreate={handleElementCreate} />
         <div className="md:absolute  bottom-20 md:bg-transparent bg-[#2D2D2D] right-5 gap-4 flex justify-center  flex-col">
           <div className="flex md:flex-wrap gap-4 justify-center items-center w-full">
