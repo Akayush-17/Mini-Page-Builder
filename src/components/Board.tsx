@@ -8,7 +8,7 @@ import {
   IconButton,
 } from "@mui/material";
 import * as React from "react";
-import { useState } from "react";
+import { useState, useRef,  Dispatch, SetStateAction } from "react";
 
 interface BoardProps {
   elements: {
@@ -29,6 +29,8 @@ interface BoardProps {
     fontWeight: string
   ) => void;
   onMove: (id: string, top: number, left: number) => void;
+  touchData: string | null;
+  setTouchData: Dispatch<SetStateAction<string | null>>;
   onEditMove: (
     id: string,
     top: number,
@@ -48,6 +50,7 @@ const Board: React.FC<BoardProps> = ({
   onDelete,
 }) => {
   const [draggedElement, setDraggedElement] = useState<string | null>(null);
+  const boardRef = useRef<HTMLDivElement>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [currentElement, setCurrentElement] = useState<{
     type: string;
@@ -65,13 +68,13 @@ const Board: React.FC<BoardProps> = ({
     null
   );
 
-  const handleDrop = (e: React.DragEvent | React.TouchEvent) => {
+  const handleDrop = (e: React.DragEvent) => {
     e.preventDefault();
     const { top, left } = e.currentTarget.getBoundingClientRect();
-    const elementType = e instanceof DragEvent ? e.dataTransfer!.getData("text") : "label";
-    const id = e instanceof DragEvent ? e.dataTransfer!.getData("id") : null;
-    const x = 'clientY' in e ? e.clientY - top : e.touches[0].clientY - top;
-    const y = 'clientX' in e ? e.clientX - left : e.touches[0].clientX - left;
+    const elementType = e.dataTransfer.getData("text");
+    const id = e.dataTransfer.getData("id");
+    const x = e.clientY - top;
+    const y = e.clientX - left;
 
     if (id) {
       onMove(id, x, y);
@@ -93,25 +96,36 @@ const Board: React.FC<BoardProps> = ({
     setDraggedElement(null);
   };
 
-  const handleDragStart = (e: React.DragEvent | React.TouchEvent, id: string) => {
+  const handleDragStart = (e: React.DragEvent, id: string) => {
     setDraggedElement(id);
-    if (e instanceof DragEvent) {
-      const dataTransfer = e.dataTransfer;
-      if (dataTransfer) {
-        dataTransfer.setData("text", "existingElement");
-        dataTransfer.setData("id", id);
-      }
-    }
+    e.dataTransfer.setData("text", "existingElement");
+    e.dataTransfer.setData("id", id);
   };
 
-  const handleMouseMove = (e: React.MouseEvent | React.TouchEvent) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (draggedElement) {
-      const { top, left } = (e.currentTarget as HTMLElement).getBoundingClientRect();
-      const x = 'clientY' in e ? e.clientY - top : e.touches[0].clientY - top;
-      const y = 'clientX' in e ? e.clientX - left : e.touches[0].clientX - left;
-      onMove(draggedElement, x, y);
+      const { top, left } = e.currentTarget.getBoundingClientRect();
+      onMove(draggedElement, e.clientY - top, e.clientX - left);
     }
   };
+  const handleTouchStart = (e: React.TouchEvent, id: string) => {
+    setDraggedElement(id);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    const touch = e.touches[0];
+    const boardRect = boardRef.current?.getBoundingClientRect();
+    if (!boardRect || !draggedElement) return;
+    const top = touch.clientY - boardRect.top;
+    const left = touch.clientX - boardRect.left;
+    onMove(draggedElement, top, left);
+  };
+
+
+  const handleTouchEnd = () => {
+    setDraggedElement(null);
+  };
+
   const handleSave = () => {
     if (editingElementId) {
       // Update existing element
@@ -237,13 +251,13 @@ const Board: React.FC<BoardProps> = ({
   return (
     <>
       <div
+        ref={boardRef}
         className="w-full relative h-full bg-[#F3F3F3]"
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
         onMouseMove={handleMouseMove}
-        onTouchMove={handleMouseMove}
-        onMouseUp={() => setDraggedElement(null)}
-        onTouchEnd={() => setDraggedElement(null)}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
         {elements.map((element) => (
           <div
@@ -254,8 +268,7 @@ const Board: React.FC<BoardProps> = ({
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}
-            onTouchStart={(e) => handleDragStart(e, element.id)}
-            onClick={() => setSelectedElementId(element.id)}
+            onTouchStart={(e) => handleTouchStart(e, element.id)}
           >
             {renderElement(element)}
           </div>
@@ -380,7 +393,7 @@ const Board: React.FC<BoardProps> = ({
                 }
               />
             </DialogContent>
-            <DialogActions sx={{  display:"flex", justifyContent:"flex-start", p:2}}>
+              <DialogActions sx={{  display:"flex", justifyContent:"flex-start", p:2}}>
               {/* <Button
                 variant="contained"
                 color="error"

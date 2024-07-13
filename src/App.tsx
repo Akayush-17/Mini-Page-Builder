@@ -3,6 +3,7 @@ import Board from "./components/Board";
 import Sidebar from "./components/Sidebar";
 
 function App() {
+  const [touchData, setTouchData] = useState<string | null>(null);
   const storedElements = localStorage.getItem("boardElements");
   const initialBoardElements: {
     id: string;
@@ -73,13 +74,12 @@ function App() {
   };
 
   const handleDragStart = (e: React.DragEvent | React.TouchEvent, id: string) => {
-    if ('dataTransfer' in e) {
-      e.dataTransfer?.setData("text", id);
+    if ("dataTransfer" in e) {
+      e.dataTransfer.setData("text", id);
     } else {
-      e.preventDefault();
+      setTouchData(id);
     }
   };
-
   const handleExport = () => {
     const jsonContent = JSON.stringify(boardElements, null, 2);
     const blob = new Blob([jsonContent], { type: "application/json" });
@@ -115,10 +115,12 @@ function App() {
           onDrop={handleDrop}
           onMove={handleMove}
           onDelete={handleDelete}
+          touchData={touchData}
+          setTouchData={setTouchData}
         />
       </div>
-      <div className="w-1/4 h-full  bg-[#2D2D2D]">
-        <Sidebar onDragStart={(e, elementType) => handleDragStart(e, elementType)} />
+      <div className="w-1/4 h-full bg-[#2D2D2D]">
+        <Sidebar onDragStart={handleDragStart} />
         <div className="md:absolute  bottom-20 md:bg-transparent bg-[#2D2D2D] right-5 gap-4 flex justify-center  flex-col">
           <div className="flex md:flex-wrap gap-4 justify-center items-center w-full">
             <input
