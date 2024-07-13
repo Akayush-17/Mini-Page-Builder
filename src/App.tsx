@@ -145,7 +145,7 @@ function App() {
           setTouchData={setTouchData}
         />
       </div>
-      {ClickInstruction ? null : <div onClick={handleInstruction}>
+      {ClickInstruction ? null : <div className="z-50" onClick={handleInstruction}>
         <svg
           width="25px"
           height="25px"
@@ -172,7 +172,7 @@ function App() {
       }
       
       {ClickInstruction ? (
-        <div>
+        <div className="z-50">
           <div
             className="bg-purple-200 max-w-fit relative
          h-full p-2"
