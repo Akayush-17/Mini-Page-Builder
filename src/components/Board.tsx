@@ -10,16 +10,19 @@ import {
 import * as React from "react";
 import { useState, useRef,  Dispatch, SetStateAction } from "react";
 
+
+interface ElementData {
+  id: string;
+  type: string;
+  top: number;
+  left: number;
+  text: string;
+  fontSize: number;
+  fontWeight: string;
+}
+
 interface BoardProps {
-  elements: {
-    id: string;
-    type: string;
-    top: number;
-    left: number;
-    text: string;
-    fontSize: number;
-    fontWeight: string;
-  }[];
+  elements: ElementData[];
   onDrop: (
     elementType: string,
     top: number,
@@ -40,6 +43,7 @@ interface BoardProps {
     fontWeight: string
   ) => void;
   onDelete: (id: string) => void;
+  
 }
 
 const Board: React.FC<BoardProps> = ({

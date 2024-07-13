@@ -105,6 +105,25 @@ function App() {
       console.error("Invalid JSON input");
     }
   };
+  const handleElementCreate = (
+    elementType: string,
+    top: number,
+    left: number,
+    text: string,
+    fontSize: number,
+    fontWeight: string
+  ) => {
+    const newElement = {
+      id: `element-${boardElements.length}`,
+      type: elementType,
+      top,
+      left,
+      text,
+      fontSize,
+      fontWeight,
+    };
+    setBoardElements((prevElements) => [...prevElements, newElement]);
+  };
 
   return (
     <div className="h-screen w-full flex md:flex-row flex-col">
@@ -120,7 +139,7 @@ function App() {
         />
       </div>
       <div className="w-1/4 h-full bg-[#2D2D2D]">
-        <Sidebar onDragStart={handleDragStart} />
+        <Sidebar onDragStart={handleDragStart} onElementCreate={handleElementCreate} />
         <div className="md:absolute  bottom-20 md:bg-transparent bg-[#2D2D2D] right-5 gap-4 flex justify-center  flex-col">
           <div className="flex md:flex-wrap gap-4 justify-center items-center w-full">
             <input
