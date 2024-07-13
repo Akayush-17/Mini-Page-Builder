@@ -191,7 +191,7 @@ const Board: React.FC<BoardProps> = ({
 
     
     const handleKeyDown = (e: React.KeyboardEvent) => {
-      if (e.key === "Enter" && !e.ctrlKey) {
+      if (e.key === "Enter") {
         setSelectedElementId(element.id);
         setEditingElementId(element.id);
         setModalOpen(true);
