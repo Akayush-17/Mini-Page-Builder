@@ -165,7 +165,7 @@ const Board: React.FC<BoardProps> = ({
 
     setModalOpen(false);
     setElementData({
-      text: "",
+      text:'',
       x: 0,
       y: 0,
       fontSize: 16,
@@ -311,9 +311,8 @@ const Board: React.FC<BoardProps> = ({
         {elements.map((element) => (
           <div
             key={element.id}
-            className={`absolute z-50 ${
-              element.type === "button" ? "bg-blue-500 rounded-md" : "bg-white"
-            }`}
+            className={`absolute z-50 ${element.type === "button" ? "bg-blue-500 rounded-md" : element.type === "label" ? "bg-transparent" : "bg-white"}`}
+
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}

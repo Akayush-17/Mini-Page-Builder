@@ -17,16 +17,13 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
   const [touchDragData, setTouchDragData] = useState<string | null>(null);
-  
-  const createNewElement = (elementType: string) => {
-    if(elementType==='label'){
 
+  const createNewElement = (elementType: string) => {
+    if (elementType === "label") {
       onElementCreate(elementType, 200, 200, "Label", 16, "normal");
-    }
-    else if(elementType==='input'){
+    } else if (elementType === "input") {
       onElementCreate(elementType, 250, 200, "Input", 16, "normal");
-    }
-    else if(elementType==='button'){
+    } else if (elementType === "button") {
       onElementCreate(elementType, 300, 200, "Button", 16, "normal");
     }
   };
@@ -84,7 +81,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000]  w-full "
           onClick={() => createNewElement("input")}
         >
-        <img src={GripIcon} alt="grip-icon" /> Input
+          <img src={GripIcon} alt="grip-icon" /> Input
         </button>
         <button
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000]  w-full "
@@ -98,7 +95,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000] "
           draggable
           onDragStart={(e) => onDragStart(e, "label")}
-          onTouchStart={() => handleTouchStart( "label")}
+          onTouchStart={() => handleTouchStart("label")}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
@@ -108,10 +105,9 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000] "
           draggable
           onDragStart={(e) => onDragStart(e, "input")}
-          onTouchStart={() => handleTouchStart( "input")}
+          onTouchStart={() => handleTouchStart("input")}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          onClick={() => createNewElement("input")}
         >
           <img src={GripIcon} alt="grip-icon" /> Input
         </div>
@@ -122,7 +118,6 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           onTouchStart={() => handleTouchStart("button")}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
-          onClick={() => createNewElement("button")}
         >
           <img src={GripIcon} alt="grip-icon" /> Button
         </div>
