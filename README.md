@@ -4,7 +4,7 @@
 https://minipage0builder.netlify.app/
 
 ## Images 
-<div className="flex justify-between gap-6">
+<div className="flex flex-row justify-between gap-6">
 <img src="./public/mob1.png" alt="mobile image"/>
 <img src="./public/mob2.png" alt="mobile image"/>
 </div>
