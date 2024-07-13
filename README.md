@@ -4,7 +4,7 @@
 https://minipage0builder.netlify.app/
 
 ## Images 
-<div className="flex flex-row justify-between gap-6">
+<div className="grid grid-cols-2 gap-2">
 <img src="./public/mob1.png" alt="mobile image"/>
 <img src="./public/mob2.png" alt="mobile image"/>
 </div>
@@ -49,6 +49,6 @@ Follow these steps to run the project locally:
    ```bash
    git clone https://github.com/Akayush-17/Mini-Page-Builder.git
    cd Mini-Page-Builder
-   run npm i
-   run npm run dev to start 
+   npm i
+   npm run dev 
 
