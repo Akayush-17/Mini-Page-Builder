@@ -188,6 +188,8 @@ const Board: React.FC<BoardProps> = ({
       padding: "10px",
       border: selectedElementId === element.id ? "2px solid red" : "none",
     };
+
+
     const handleKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === "Enter" && !e.ctrlKey) {
         openModal();
@@ -196,9 +198,7 @@ const Board: React.FC<BoardProps> = ({
     const handleElementClick = () => {
       openModal();
     };
-    const handleClick = () => {
-      setSelectedElementId(element.id);
-    };
+
     const openModal = () => {
       setSelectedElementId(element.id);
       setEditingElementId(element.id);
@@ -219,7 +219,7 @@ const Board: React.FC<BoardProps> = ({
             onKeyDown={handleKeyDown}
             placeholder="Enter Value"
             onClick={() => {
-              handleClick();
+            
               if (windowWidth < 768) {
                 handleElementClick();
               }
@@ -235,7 +235,7 @@ const Board: React.FC<BoardProps> = ({
             tabIndex={0}
             onKeyDown={handleKeyDown}
             onClick={() => {
-              handleClick();
+            
               if (windowWidth < 768) {
                 handleElementClick();
               }
@@ -250,7 +250,7 @@ const Board: React.FC<BoardProps> = ({
           <button
             onKeyDown={handleKeyDown}
             onClick={() => {
-              handleClick();
+       
               if (windowWidth < 768) {
                 handleElementClick();
               }
