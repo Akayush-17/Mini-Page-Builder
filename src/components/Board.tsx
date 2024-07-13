@@ -141,7 +141,7 @@ const Board: React.FC<BoardProps> = ({
 
   const handleSave = () => {
     if (editingElementId) {
-      // Update existing element
+      
       onEditMove(
         editingElementId,
         elementData.x,
@@ -150,9 +150,9 @@ const Board: React.FC<BoardProps> = ({
         elementData.fontSize,
         elementData.fontWeight
       );
-      setEditingElementId(null); // Reset editingElementId
+      setEditingElementId(null); 
     } else if (currentElement) {
-      // Create new element
+   
       onDrop(
         currentElement.type,
         elementData.x,
@@ -189,16 +189,27 @@ const Board: React.FC<BoardProps> = ({
       border: selectedElementId === element.id ? "2px solid red" : "none",
     };
 
-
+    
     const handleKeyDown = (e: React.KeyboardEvent) => {
       if (e.key === "Enter" && !e.ctrlKey) {
-        openModal();
+        setSelectedElementId(element.id);
+        setEditingElementId(element.id);
+        setModalOpen(true);
+        setElementData({
+          text: element.text,
+          x: element.top,
+          y: element.left,
+          fontSize: element.fontSize,
+          fontWeight: element.fontWeight,
+        });
       }
     };
     const handleElementClick = () => {
       openModal();
     };
-
+    const handleClick = () => {
+      setSelectedElementId(element.id);
+    };
     const openModal = () => {
       setSelectedElementId(element.id);
       setEditingElementId(element.id);
@@ -219,7 +230,7 @@ const Board: React.FC<BoardProps> = ({
             onKeyDown={handleKeyDown}
             placeholder="Enter Value"
             onClick={() => {
-            
+              handleClick();
               if (windowWidth < 768) {
                 handleElementClick();
               }
@@ -235,7 +246,7 @@ const Board: React.FC<BoardProps> = ({
             tabIndex={0}
             onKeyDown={handleKeyDown}
             onClick={() => {
-            
+              handleClick();
               if (windowWidth < 768) {
                 handleElementClick();
               }
@@ -250,7 +261,7 @@ const Board: React.FC<BoardProps> = ({
           <button
             onKeyDown={handleKeyDown}
             onClick={() => {
-       
+              handleClick();
               if (windowWidth < 768) {
                 handleElementClick();
               }
