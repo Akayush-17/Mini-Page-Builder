@@ -1,0 +1,29 @@
+[
+  {
+    "id": "element-0",
+    "type": "label",
+    "top": 74.4329833984375,
+    "left": 141.64947509765625,
+    "text": "Label",
+    "fontSize": 16,
+    "fontWeight": "normal"
+  },
+  {
+    "id": "element-1",
+    "type": "input",
+    "top": 132.98968505859375,
+    "left": 142.47422790527344,
+    "text": "Input",
+    "fontSize": 16,
+    "fontWeight": "normal"
+  },
+  {
+    "id": "element-2",
+    "type": "button",
+    "top": 192.37112426757812,
+    "left": 141.64947509765625,
+    "text": "Button",
+    "fontSize": 16,
+    "fontWeight": "normal"
+  }
+]
