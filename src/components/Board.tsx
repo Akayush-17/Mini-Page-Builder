@@ -112,7 +112,7 @@ const Board: React.FC<BoardProps> = ({
       onMove(draggedElement, e.clientY - top, e.clientX - left);
     }
   };
-  const handleTouchStart = (e: React.TouchEvent, id: string) => {
+  const handleTouchStart = (id: string) => {
     setDraggedElement(id);
   };
 
@@ -272,7 +272,7 @@ const Board: React.FC<BoardProps> = ({
             style={{ top: element.top, left: element.left }}
             draggable
             onDragStart={(e) => handleDragStart(e, element.id)}
-            onTouchStart={(e) => handleTouchStart(e, element.id)}
+            onTouchStart={() => handleTouchStart( element.id)}
           >
             {renderElement(element)}
           </div>

@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
     }
   };
 
-  const handleTouchStart = (e: React.TouchEvent, elementType: string) => {
+  const handleTouchStart = (elementType: string) => {
     setTouchDragData(elementType);
   };
 
@@ -98,7 +98,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000] "
           draggable
           onDragStart={(e) => onDragStart(e, "label")}
-          onTouchStart={(e) => handleTouchStart(e, "label")}
+          onTouchStart={() => handleTouchStart( "label")}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
         >
@@ -108,7 +108,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000] "
           draggable
           onDragStart={(e) => onDragStart(e, "input")}
-          onTouchStart={(e) => handleTouchStart(e, "input")}
+          onTouchStart={() => handleTouchStart( "input")}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onClick={() => createNewElement("input")}
@@ -119,7 +119,7 @@ const Sidebar: React.FC<SidebarProps> = ({ onElementCreate, onDragStart }) => {
           className="mb-2 p-2 bg-white cursor-grab rounded-sm flex items-center gap-2 text-base font-light text-[#000]"
           draggable
           onDragStart={(e) => onDragStart(e, "button")}
-          onTouchStart={(e) => handleTouchStart(e, "button")}
+          onTouchStart={() => handleTouchStart("button")}
           onTouchMove={handleTouchMove}
           onTouchEnd={handleTouchEnd}
           onClick={() => createNewElement("button")}
